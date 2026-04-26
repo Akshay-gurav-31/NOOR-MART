@@ -166,11 +166,15 @@ const App = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // Fetch products directly from Supabase — works on both local & Vercel without backend env vars
-        const { data, error } = await supabase.from('products').select('*').order('name');
+        // Fetch products directly from Supabase
+        const { data, error } = await supabase.from('products').select('*');
         if (error) throw error;
-        setProducts(data);
-        localStorage.setItem('noor_mart_products', JSON.stringify(data));
+        
+        // Shuffle the products array for a fresh look on every visit
+        const shuffled = [...data].sort(() => Math.random() - 0.5);
+        
+        setProducts(shuffled);
+        localStorage.setItem('noor_mart_products', JSON.stringify(shuffled));
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
