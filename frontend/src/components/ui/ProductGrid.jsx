@@ -1,32 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
 import { ProductSkeleton } from './Skeleton';
 
-const API_BASE_URL = '/api';
-
-const ProductGrid = ({ addToCart }) => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+const ProductGrid = ({ products = [], addToCart }) => {
   const [filter, setFilter] = useState('ALL');
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true); // Ensure it starts as true
-      try {
-        const response = await axios.get(`${API_BASE_URL}/products`);
-        // Artificial delay for 'Proper' skeleton visibility
-        setTimeout(() => {
-          setProducts(response.data);
-          setLoading(false);
-        }, 1000);
-      } catch (err) {
-        console.error("Failed to fetch products:", err);
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+  const loading = products.length === 0;
 
   const filteredProducts = products.filter(p => {
     const name = (p.name || '').toUpperCase();
