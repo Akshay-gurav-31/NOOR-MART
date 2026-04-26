@@ -155,6 +155,10 @@ const App = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setAuthLoading(false);
+      // Clean up the OAuth hash tokens from the URL (e.g. /#access_token=...)
+      if (window.location.hash && window.location.hash.includes('access_token')) {
+        window.history.replaceState(null, '', '/');
+      }
     });
 
     return () => subscription.unsubscribe();

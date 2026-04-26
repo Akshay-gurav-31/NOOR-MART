@@ -45,12 +45,16 @@ const Auth = () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
       });
       if (error) throw error;
     } catch (error) {
       setError(error.message);
     }
   };
+
 
   return (
     <div className="min-h-screen relative flex items-center justify-center overflow-hidden bg-[#0d0f0d]">
