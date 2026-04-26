@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import Hero from '../components/ui/Hero';
 import ProductGrid from '../components/ui/ProductGrid';
 import Narrative from '../components/ui/Narrative';
@@ -8,22 +9,24 @@ import Gallery from './Archive';
 import TheEdit from './TheEdit';
 
 const Home = ({ products, addToCart }) => {
-  React.useEffect(() => {
-    // 1. Handle direct hash links (e.g. /#gallery) on load
-    const hash = window.location.hash;
-    if (hash) {
-      setTimeout(() => {
-        const el = document.querySelector(hash);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 500); // Small delay for content to render
-    }
+  const location = useLocation();
 
-    // 2. Remember last scroll position
+  // Handle hash-based scrolling (e.g. /#collections, /#gallery)
+  React.useEffect(() => {
+    const hash = location.hash;
+    if (hash) {
+      const el = document.querySelector(hash);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+      }
+    }
+  }, [location.hash]);
+
+  // Remember last scroll position when no hash is active
+  React.useEffect(() => {
     const savedPosition = localStorage.getItem('noor_mart_scroll');
-    if (savedPosition && !hash) {
-      setTimeout(() => {
-        window.scrollTo({ top: parseInt(savedPosition), behavior: 'auto' });
-      }, 500);
+    if (savedPosition && !location.hash) {
+      setTimeout(() => window.scrollTo({ top: parseInt(savedPosition), behavior: 'auto' }), 100);
     }
 
     const handleScroll = () => {
