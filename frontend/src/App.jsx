@@ -59,7 +59,6 @@ const AppContent = ({ products, cart, isCartOpen, setIsCartOpen, theme, toggleTh
       });
       setCart(prev => [...prev, { ...product, cartItemId: response.data.id }]);
       setIsCartOpen(true);
-      showToast('Added to your Noor Mart Bag', 'success');
     } catch (error) {
       const errorMsg = error.response?.data?.error || error.message;
       console.error('Error adding to cart:', errorMsg);
