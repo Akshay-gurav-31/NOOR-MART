@@ -33,8 +33,7 @@ const Profile = ({ session, showToast }) => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ full_name: newName, updated_at: new Date() })
-        .eq('id', user.id);
+        .upsert({ id: user.id, full_name: newName, updated_at: new Date() });
       
       if (error) throw error;
       setProfile({ ...profile, full_name: newName });
