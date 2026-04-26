@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../services/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 const Auth = () => {
   const [loading, setLoading] = useState(false);
@@ -10,6 +10,7 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -131,24 +132,35 @@ const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="EMAIL ADDRESS"
-                className="w-full bg-stone-50 border border-stone-200 focus:border-black outline-none px-6 py-5 text-[11px] tracking-[0.2em] text-black placeholder:text-zinc-400 transition-all uppercase"
+                className="w-full bg-stone-50 border border-stone-200 focus:border-black outline-none px-6 py-5 text-[12px] tracking-wide text-black placeholder:text-zinc-400 placeholder:tracking-[0.2em] placeholder:uppercase transition-all"
                 required
               />
 
               <div className="relative">
                 <input 
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="PASSWORD"
-                  className="w-full bg-stone-50 border border-stone-200 focus:border-black outline-none px-6 py-5 text-[11px] tracking-[0.2em] text-black placeholder:text-zinc-400 transition-all uppercase"
+                  className="w-full bg-stone-50 border border-stone-200 focus:border-black outline-none px-6 py-5 pr-24 text-[12px] tracking-wide text-black placeholder:text-zinc-400 placeholder:tracking-[0.2em] placeholder:uppercase transition-all"
                   required
                 />
-                {!isSignUp && (
-                  <button type="button" className="absolute right-6 top-1/2 -translate-y-1/2 text-[9px] text-zinc-400 hover:text-black uppercase tracking-widest font-bold">
-                    Forgot?
+                
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-zinc-400 hover:text-black transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
-                )}
+                  
+                  {!isSignUp && (
+                    <button type="button" className="text-[9px] text-zinc-400 hover:text-black uppercase tracking-widest font-bold">
+                      Forgot?
+                    </button>
+                  )}
+                </div>
               </div>
 
               {error && (
