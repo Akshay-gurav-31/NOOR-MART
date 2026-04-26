@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { X, Trash2, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import CheckoutModal from './CheckoutModal';
 
 const CartSidebar = ({ isOpen, onClose, cartItems, removeFromCart }) => {
   const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   return (
     <AnimatePresence>
@@ -79,7 +81,10 @@ const CartSidebar = ({ isOpen, onClose, cartItems, removeFromCart }) => {
                   <p className="text-xs uppercase tracking-[0.3em] text-white/60 font-medium">Subtotal</p>
                   <p className="text-3xl font-bold text-primary">₹{total.toFixed(2)}</p>
                 </div>
-                <button className="w-full py-5 gold-gradient text-black font-bold uppercase tracking-[0.2em] text-sm hover:scale-[1.02] active:scale-[0.98] transition-all">
+                <button
+                  onClick={() => setCheckoutOpen(true)}
+                  className="w-full py-5 gold-gradient text-black font-bold uppercase tracking-[0.2em] text-sm hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
                   Proceed to Checkout
                 </button>
               </div>
@@ -88,6 +93,13 @@ const CartSidebar = ({ isOpen, onClose, cartItems, removeFromCart }) => {
         </>
       )}
     </AnimatePresence>
+
+    <CheckoutModal
+      isOpen={checkoutOpen}
+      onClose={() => setCheckoutOpen(false)}
+      cartItems={cartItems}
+      total={total}
+    />
   );
 };
 
