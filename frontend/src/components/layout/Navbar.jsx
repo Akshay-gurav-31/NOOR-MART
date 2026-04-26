@@ -14,9 +14,9 @@ const Navbar = ({ cartCount, onCartClick, onLogout, user }) => {
         </Link>
         
         <div className="hidden md:flex items-center gap-12 font-inter tracking-[0.2em] text-[11px] uppercase font-medium">
-          <a href="#collections" className="text-[10px] font-bold tracking-[0.2em] text-zinc-900 uppercase border-b border-transparent hover:border-zinc-900 transition-all">COLLECTIONS</a>
-          <a href="#gallery" className="text-[10px] font-bold tracking-[0.2em] text-zinc-900 uppercase border-b border-transparent hover:border-zinc-900 transition-all">GALLERY</a>
-          <a href="#about" className="text-[10px] font-bold tracking-[0.2em] text-zinc-900 uppercase border-b border-transparent hover:border-zinc-900 transition-all">ABOUT</a>
+          <Link to="/#collections" className="text-[10px] font-bold tracking-[0.2em] text-zinc-900 uppercase border-b border-transparent hover:border-zinc-900 transition-all">COLLECTIONS</Link>
+          <Link to="/#gallery" className="text-[10px] font-bold tracking-[0.2em] text-zinc-900 uppercase border-b border-transparent hover:border-zinc-900 transition-all">GALLERY</Link>
+          <Link to="/#about" className="text-[10px] font-bold tracking-[0.2em] text-zinc-900 uppercase border-b border-transparent hover:border-zinc-900 transition-all">ABOUT</Link>
         </div>
 
         <div className="flex items-center gap-6">

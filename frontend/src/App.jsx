@@ -87,8 +87,8 @@ const AppContent = ({ products, cart, isCartOpen, setIsCartOpen, theme, toggleTh
           <Route path="/gallery" element={<Archive />} />
           <Route path="/profile" element={authLoading ? null : session ? <Profile session={session} showToast={showToast} /> : <Navigate to="/login" />} />
 
-          <Route path="/login" element={authLoading ? null : session ? <Navigate to="/" /> : <Auth />} />
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/login" element={authLoading ? <div className="h-screen bg-zinc-950" /> : session ? <Navigate to="/" /> : <Auth />} />
+          <Route path="*" element={authLoading ? <div className="h-screen bg-zinc-950" /> : <Navigate to="/" />} />
         </Routes>
       </main>
 
@@ -125,11 +125,19 @@ const App = () => {
     const cached = localStorage.getItem('noor_mart_products');
     return cached ? JSON.parse(cached) : [];
   });
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    const cached = localStorage.getItem('noor_mart_cart');
+    return cached ? JSON.parse(cached) : [];
+  });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [session, setSession] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [globalLoading, setGlobalLoading] = useState(products.length === 0);
+
+  // Sync cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('noor_mart_cart', JSON.stringify(cart));
+  }, [cart]);
   
   // Toast State
   const [toast, setToast] = useState({ isVisible: false, message: '', type: 'success' });
