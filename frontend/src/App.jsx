@@ -24,8 +24,11 @@ const AppContent = ({ products, cart, isCartOpen, setIsCartOpen, theme, toggleTh
       if (session?.user) {
         try {
           const response = await axios.get(`/api/cart/${session.user.id}`);
-          // Map backend items to product objects for the UI
-          const cartProducts = response.data.map(item => item.products);
+          // Map backend items to product objects for the UI, keeping the cart_items ID
+          const cartProducts = response.data.map(item => ({
+            ...item.products,
+            cartItemId: item.id
+          }));
           setCart(cartProducts);
         } catch (error) {
           console.error('Error fetching cart:', error);
@@ -49,12 +52,12 @@ const AppContent = ({ products, cart, isCartOpen, setIsCartOpen, theme, toggleTh
     }
 
     try {
-      await axios.post('/api/cart', {
+      const response = await axios.post('/api/cart', {
         productId: product.id,
         quantity: 1,
         userId: session.user.id
       });
-      setCart(prev => [...prev, product]);
+      setCart(prev => [...prev, { ...product, cartItemId: response.data.id }]);
       setIsCartOpen(true);
       showToast('Added to your Noor Mart Bag', 'success');
     } catch (error) {
@@ -164,10 +167,25 @@ const App = () => {
     fetchProducts();
   }, []);
 
-  const removeFromCart = (index) => {
-    const newCart = [...cart];
-    newCart.splice(index, 1);
-    setCart(newCart);
+  const removeFromCart = async (index) => {
+    const itemToRemove = cart[index];
+    if (itemToRemove && itemToRemove.cartItemId) {
+      try {
+        await axios.delete(`/api/cart/${itemToRemove.cartItemId}`);
+        const newCart = [...cart];
+        newCart.splice(index, 1);
+        setCart(newCart);
+        showToast('Item removed from bag', 'info');
+      } catch (error) {
+        console.error('Error removing from cart:', error);
+        showToast('Failed to remove item', 'error');
+      }
+    } else {
+      // Fallback for UI-only items (if any)
+      const newCart = [...cart];
+      newCart.splice(index, 1);
+      setCart(newCart);
+    }
   };
 
   const handleLogout = async () => {
