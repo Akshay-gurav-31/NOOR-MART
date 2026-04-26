@@ -34,32 +34,6 @@ NOOR MART is designed on the philosophy that luxury is found in minimalist excel
 
 ---
 
-## 🚀 Deployment Guide (Vercel + Supabase)
-
-You can easily deploy this entire stack for free.
-
-### 1. Frontend (Vercel)
-The React app is 100% ready for Vercel.
-1. Push your code to GitHub.
-2. Go to [Vercel](https://vercel.com) and import the repository.
-3. Set the Framework Preset to **Vite**.
-4. Set the Root Directory to `frontend`.
-5. Add your Environment Variables (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_URL`).
-6. Click **Deploy**.
-
-### 2. Backend (Railway or Render)
-While Vercel *can* run Express, it's highly recommended to use **Railway.app** or **Render.com** for standard Node.js Express backends.
-1. Create a new Web Service on Railway/Render.
-2. Point it to your GitHub repository and set the Root Directory to `backend`.
-3. Add your Supabase keys to the Environment Variables.
-4. Deploy! (Update your Frontend's `VITE_API_URL` to point to this new backend URL).
-
-### 3. Database (Supabase)
-1. Run the `docs/noor_mart_master.sql` script in your Supabase SQL Editor to instantly set up all tables, security policies, and premium seed products.
-2. **Important:** Add your deployed Frontend URL to your Supabase project's **Authentication -> URL Configuration** (Site URL and Redirect URLs) so logins work in production.
-
----
-
 ## 💻 Local Setup
 
 Run the following commands in the root directory:
