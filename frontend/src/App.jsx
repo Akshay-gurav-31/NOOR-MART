@@ -23,9 +23,14 @@ const AppContent = ({ products, cart, isCartOpen, setIsCartOpen, theme, toggleTh
     const fetchCart = async () => {
       if (session?.user) {
         try {
-          const response = await axios.get(`/api/cart/${session.user.id}`);
-          // Map backend items to product objects for the UI, keeping the cart_items ID
-          const cartProducts = response.data.map(item => ({
+          const { data, error } = await supabase
+            .from('cart_items')
+            .select('*, products(*)')
+            .eq('user_id', session.user.id);
+            
+          if (error) throw error;
+
+          const cartProducts = data.map(item => ({
             ...item.products,
             cartItemId: item.id
           }));
@@ -52,12 +57,29 @@ const AppContent = ({ products, cart, isCartOpen, setIsCartOpen, theme, toggleTh
     }
 
     try {
-      const response = await axios.post('/api/cart', {
-        productId: product.id,
-        quantity: 1,
-        userId: session.user.id
-      });
-      setCart(prev => [...prev, { ...product, cartItemId: response.data.id }]);
+      const { data: existing } = await supabase
+        .from('cart_items')
+        .select('*')
+        .eq('product_id', product.id)
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (existing) {
+        const { data, error } = await supabase
+          .from('cart_items')
+          .update({ quantity: existing.quantity + 1 })
+          .eq('id', existing.id)
+          .select();
+        if (error) throw error;
+        setCart(prev => [...prev, { ...product, cartItemId: data[0].id }]);
+      } else {
+        const { data, error } = await supabase
+          .from('cart_items')
+          .insert([{ product_id: product.id, quantity: 1, user_id: session.user.id }])
+          .select();
+        if (error) throw error;
+        setCart(prev => [...prev, { ...product, cartItemId: data[0].id }]);
+      }
       setIsCartOpen(true);
     } catch (error) {
       const errorMsg = error.response?.data?.error || error.message;
@@ -166,15 +188,12 @@ const App = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // Fetch products directly from Supabase
-        const { data, error } = await supabase.from('products').select('*');
+        // Fetch products directly from Supabase, ordered consistently
+        const { data, error } = await supabase.from('products').select('*').order('name');
         if (error) throw error;
         
-        // Shuffle the products array for a fresh look on every visit
-        const shuffled = [...data].sort(() => Math.random() - 0.5);
-        
-        setProducts(shuffled);
-        localStorage.setItem('noor_mart_products', JSON.stringify(shuffled));
+        setProducts(data);
+        localStorage.setItem('noor_mart_products', JSON.stringify(data));
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -188,7 +207,11 @@ const App = () => {
     const itemToRemove = cart[index];
     if (itemToRemove && itemToRemove.cartItemId) {
       try {
-        await axios.delete(`/api/cart/${itemToRemove.cartItemId}`);
+        const { error } = await supabase
+          .from('cart_items')
+          .delete()
+          .eq('id', itemToRemove.cartItemId);
+        if (error) throw error;
         const newCart = [...cart];
         newCart.splice(index, 1);
         setCart(newCart);
