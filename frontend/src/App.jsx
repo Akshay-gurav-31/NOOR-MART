@@ -163,9 +163,11 @@ const App = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('/api/products');
-        setProducts(response.data);
-        localStorage.setItem('noor_mart_products', JSON.stringify(response.data));
+        // Fetch products directly from Supabase — works on both local & Vercel without backend env vars
+        const { data, error } = await supabase.from('products').select('*').order('name');
+        if (error) throw error;
+        setProducts(data);
+        localStorage.setItem('noor_mart_products', JSON.stringify(data));
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
