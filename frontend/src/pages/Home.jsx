@@ -14,10 +14,14 @@ const Home = ({ products, addToCart }) => {
   // Handle hash-based scrolling (e.g. /#collections, /#gallery)
   React.useEffect(() => {
     const hash = location.hash;
-    if (hash) {
-      const el = document.querySelector(hash);
-      if (el) {
-        setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    if (hash && !hash.includes('access_token') && !hash.includes('error_description')) {
+      try {
+        const el = document.querySelector(hash);
+        if (el) {
+          setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        }
+      } catch (e) {
+        // Ignore invalid selectors (e.g., unexpected hashes)
       }
     }
   }, [location.hash]);
