@@ -14,14 +14,25 @@ const Profile = ({ session, showToast }) => {
   useEffect(() => {
     const fetchProfile = async () => {
       if (user) {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
           .single();
-        if (data) {
-          setProfile(data);
-          setNewName(data.full_name || '');
+
+        // Determine best name: DB > Google metadata > email prefix
+        const googleName = user.user_metadata?.full_name || user.user_metadata?.name;
+        const emailName = user.email?.split('@')[0]?.replace(/[._]/g, ' ');
+        const bestName = data?.full_name || googleName || emailName || '';
+
+        setProfile({ ...data, full_name: bestName });
+        setNewName(bestName);
+
+        // Auto-save name to DB if not already set
+        if (!data?.full_name && bestName) {
+          await supabase
+            .from('profiles')
+            .upsert({ id: user.id, full_name: bestName, updated_at: new Date() });
         }
       }
     };
