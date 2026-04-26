@@ -21,11 +21,8 @@ app.get('/', (req, res) => {
   res.send('NOOR MART Backend API (v2) is running.');
 });
 
-// Vercel Serverless Function compatibility
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT} (Local Development)`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 module.exports = app;
