@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { ProductSkeleton } from './Skeleton';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = '/api';
 
 const ProductGrid = ({ addToCart }) => {
   const [products, setProducts] = useState([]);
